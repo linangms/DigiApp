@@ -19,6 +19,14 @@ app.use(express.static(path.join(__dirname)));
 
 // --- API Endpoints ---
 
+// Health Check
+app.get('/health', (req, res) => res.send('API is running'));
+
+// Explicit Root Route (Fallback)
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
 // Get Assessments
 app.get('/api/assessments', async (req, res) => {
     try {
