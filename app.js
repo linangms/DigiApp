@@ -227,8 +227,8 @@ async function handleAdd(e) {
         examWeek: formData.get('examWeek'),
         examDate: formData.get('examDate'),
         venue: formData.get('venue'),
-        venueBooked: formData.get('venueBooked') === 'on',
-        openBook: formData.get('openBook') === 'on',
+        // venueBooked: formData.get('venueBooked') === 'on', // Removed
+        openBook: formData.get('openBook'), // Now a string from select
 
         firstContact: false,
         demoTraining: false,
@@ -236,6 +236,7 @@ async function handleAdd(e) {
         mockTest: false,
         approved: false,
         confirmed: false,
+        applicationRequired: formData.get('applicationRequired') === 'on',
 
         platform: formData.get('platform'),
         questionTypes: questionTypes,
@@ -393,8 +394,9 @@ function updateDashboard() {
                 'Mock Setup': 0,
                 'Mock Test': 0,
                 'Approved': 0,
-                'Venue Booked': 0,
+                // 'Venue Booked': 0, // Removed
                 'Confirmed': 0,
+                'Application Required': 0,
                 'COMPLETED': 0,
                 'CANCELED': 0
             };
@@ -405,8 +407,8 @@ function updateDashboard() {
         if (a.mockSetup) schoolStats[a.school]['Mock Setup']++;
         if (a.mockTest) schoolStats[a.school]['Mock Test']++;
         if (a.approved) schoolStats[a.school]['Approved']++;
-        if (a.venueBooked) schoolStats[a.school]['Venue Booked']++;
         if (a.confirmed) schoolStats[a.school]['Confirmed']++;
+        if (a.applicationRequired) schoolStats[a.school]['Application Required']++;
         if (st === 'COMPLETED') schoolStats[a.school]['COMPLETED']++;
         if (st === 'CANCELED') schoolStats[a.school]['CANCELED']++;
     });
@@ -515,8 +517,9 @@ function renderChart(schoolStats) {
         'Mock Setup',
         'Mock Test',
         'Approved',
-        'Venue Booked',
+        // 'Venue Booked',
         'Confirmed',
+        'Application Required',
         'COMPLETED',
         'CANCELED'
     ];
@@ -528,8 +531,9 @@ function renderChart(schoolStats) {
         'Mock Setup': '#fca5a5',   // Light Red
         'Mock Test': '#f87171',    // Red
         'Approved': '#60a5fa',     // Blue
-        'Venue Booked': '#818cf8', // Indigo
+        // 'Venue Booked': '#818cf8', // Indigo
         'Confirmed': '#a78bfa',    // Purple
+        'Application Required': '#db2777', // Pink
         'COMPLETED': '#16a34a',    // Green (Distinct from Teal)
         'CANCELED': '#9ca3af'      // Gray
     };
@@ -659,8 +663,8 @@ function renderTable(data) {
             <td class="text-center">${createToggle('mockSetup', item.mockSetup)}</td>
             <td class="text-center">${createToggle('mockTest', item.mockTest)}</td>
             <td class="text-center">${createToggle('approved', item.approved)}</td>
-            <td class="text-center">${createToggle('venueBooked', item.venueBooked)}</td>
             <td class="text-center">${createToggle('confirmed', item.confirmed)}</td>
+            <td class="text-center">${createToggle('applicationRequired', item.applicationRequired)}</td>
             
             <td>${statusSelectHtml}</td>
             <td>

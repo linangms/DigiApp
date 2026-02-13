@@ -164,19 +164,21 @@
                             <input type="text" name="venue">
                         </div>
 
-                        <div class="form-group checkbox-group">
-                            <label>Venue Booked?</label>
-                            <div class="switch-wrapper">
-                                <input type="checkbox" name="venueBooked" id="venueBooked">
-                                <label for="venueBooked" class="switch"></label>
-                            </div>
+                        <!-- Venue Booked Removed -->
+
+                        <div class="form-group">
+                            <label>Open Book / Closed Book</label>
+                            <select name="openBook">
+                                <option value="Closed-Book">Closed-Book</option>
+                                <option value="Open-Book">Open-Book</option>
+                            </select>
                         </div>
 
                         <div class="form-group checkbox-group">
-                            <label>Open Book?</label>
+                            <label>Application Required?</label>
                             <div class="switch-wrapper">
-                                <input type="checkbox" name="openBook" id="openBook">
-                                <label for="openBook" class="switch"></label>
+                                <input type="checkbox" name="applicationRequired" id="applicationRequired">
+                                <label for="applicationRequired" class="switch"></label>
                             </div>
                         </div>
 
@@ -197,6 +199,7 @@
                                 <label><input type="checkbox" name="qType" value="MCQ"> MCQ</label>
                                 <label><input type="checkbox" name="qType" value="True/False"> True/False</label>
                                 <label><input type="checkbox" name="qType" value="Secured Excel"> Secured Excel</label>
+                                <label><input type="checkbox" name="qType" value="Drawing"> Drawing</label>
                             </div>
                         </div>
 
@@ -241,8 +244,8 @@
                                 <th>Mock Setup</th>
                                 <th>Mock Test</th>
                                 <th>Approved</th>
-                                <th>Venue Booked</th>
                                 <th>Confirmed</th>
+                                <th>App Required</th>
                                 <th>Completed/<br>Canceled</th>
                                 <th>Actions</th>
                             </tr>

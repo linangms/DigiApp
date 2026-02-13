@@ -12,8 +12,7 @@ const AssessmentSchema = new mongoose.Schema({
     examWeek: String,
     examDate: Date,
     venue: String,
-    venueBooked: { type: Boolean, default: false },
-    openBook: { type: Boolean, default: false },
+    openBook: { type: String, default: 'Closed-Book' }, // Changed to String
 
     // Status Flags
     firstContact: { type: Boolean, default: false },
@@ -22,6 +21,7 @@ const AssessmentSchema = new mongoose.Schema({
     mockTest: { type: Boolean, default: false },
     approved: { type: Boolean, default: false },
     confirmed: { type: Boolean, default: false },
+    applicationRequired: { type: Boolean, default: false }, // New Field
 
     platform: String,
     questionTypes: [String],
