@@ -224,8 +224,9 @@ async function handleAdd(e) {
         instructorName: formData.get('instructorName'),
         instructorEmail: formData.get('instructorEmail'),
         studentCount: formData.get('studentCount'),
-        examWeek: formData.get('examWeek'),
-        examDate: formData.get('examDate'),
+        studentCount: formData.get('studentCount'),
+        assessmentType: formData.get('assessmentType'),
+        assessmentDate: formData.get('assessmentDate'),
         venue: formData.get('venue'),
         // venueBooked: formData.get('venueBooked') === 'on', // Removed
         openBook: formData.get('openBook'), // Now a string from select
@@ -236,7 +237,7 @@ async function handleAdd(e) {
         mockTest: false,
         approved: false,
         confirmed: false,
-        applicationRequired: formData.get('applicationRequired') === 'on',
+        // applicationRequired: removed
 
         platform: formData.get('platform'),
         questionTypes: questionTypes,
@@ -310,8 +311,8 @@ function handleExport() {
         Instructor: a.instructorName,
         Email: a.instructorEmail,
         Students: a.studentCount,
-        'Exam Week': a.examWeek,
-        'Exam Date': a.examDate,
+        'Assessment Type': a.assessmentType,
+        'Assessment Date': a.assessmentDate,
         'First Contact': a.firstContact ? 'Yes' : 'No',
         'Demo/Training': a.demoTraining ? 'Yes' : 'No',
         'Mock Setup': a.mockSetup ? 'Yes' : 'No',
@@ -396,7 +397,6 @@ function updateDashboard() {
                 'Approved': 0,
                 // 'Venue Booked': 0, // Removed
                 'Confirmed': 0,
-                'Application Required': 0,
                 'COMPLETED': 0,
                 'CANCELED': 0
             };
@@ -408,7 +408,6 @@ function updateDashboard() {
         if (a.mockTest) schoolStats[a.school]['Mock Test']++;
         if (a.approved) schoolStats[a.school]['Approved']++;
         if (a.confirmed) schoolStats[a.school]['Confirmed']++;
-        if (a.applicationRequired) schoolStats[a.school]['Application Required']++;
         if (st === 'COMPLETED') schoolStats[a.school]['COMPLETED']++;
         if (st === 'CANCELED') schoolStats[a.school]['CANCELED']++;
     });
@@ -519,7 +518,6 @@ function renderChart(schoolStats) {
         'Approved',
         // 'Venue Booked',
         'Confirmed',
-        'Application Required',
         'COMPLETED',
         'CANCELED'
     ];
@@ -533,7 +531,6 @@ function renderChart(schoolStats) {
         'Approved': '#60a5fa',     // Blue
         // 'Venue Booked': '#818cf8', // Indigo
         'Confirmed': '#a78bfa',    // Purple
-        'Application Required': '#db2777', // Pink
         'COMPLETED': '#16a34a',    // Green (Distinct from Teal)
         'CANCELED': '#9ca3af'      // Gray
     };
@@ -653,8 +650,9 @@ function renderTable(data) {
                 <div class="text-xs text-muted">Sem: ${item.semester}</div>
             </td>
             <td>
-                <div>${item.examDate ? new Date(item.examDate).toLocaleDateString() : '-'}</div>
+                <div>${item.assessmentDate ? new Date(item.assessmentDate).toLocaleDateString() : '-'}</div>
                 ${venueDisplay}
+                <div class="text-xs text-muted" style="margin-top:2px;">${item.assessmentType || ''}</div>
                 <div class="text-xs text-muted" style="margin-top:2px; font-style:italic;">${item.platform || ''}</div>
             </td>
             <!-- New Columns -->
@@ -664,7 +662,6 @@ function renderTable(data) {
             <td class="text-center">${createToggle('mockTest', item.mockTest)}</td>
             <td class="text-center">${createToggle('approved', item.approved)}</td>
             <td class="text-center">${createToggle('confirmed', item.confirmed)}</td>
-            <td class="text-center">${createToggle('applicationRequired', item.applicationRequired)}</td>
             
             <td>${statusSelectHtml}</td>
             <td>

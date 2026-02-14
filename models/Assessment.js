@@ -9,8 +9,9 @@ const AssessmentSchema = new mongoose.Schema({
     instructorName: String,
     instructorEmail: String,
     studentCount: String,
-    examWeek: String,
-    examDate: Date,
+    studentCount: String,
+    assessmentType: String,
+    assessmentDate: Date,
     venue: String,
     openBook: { type: String, default: 'Closed-Book' }, // Changed to String
 
@@ -21,7 +22,7 @@ const AssessmentSchema = new mongoose.Schema({
     mockTest: { type: Boolean, default: false },
     approved: { type: Boolean, default: false },
     confirmed: { type: Boolean, default: false },
-    applicationRequired: { type: Boolean, default: false }, // New Field
+    // applicationRequired removed
 
     platform: String,
     questionTypes: [String],
