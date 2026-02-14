@@ -659,6 +659,18 @@ tr.clickable-row:hover td {
     }
 }
 
+.grid-2-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+@media (max-width: 600px) {
+    .grid-2-cols {
+        grid-template-columns: 1fr;
+    }
+}
+
 .grid-4-cols {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
