@@ -18,7 +18,7 @@ const dashboardSection = document.getElementById('dashboardSection');
 // Selects
 const schoolSelect = document.getElementById('schoolSelect');
 const courseSelect = document.getElementById('courseSelect');
-const courseIdSelect = document.getElementById('courseIdSelect');
+
 
 // Dashboard Elements
 const coverageStat = document.getElementById('coverageStat');
@@ -41,7 +41,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Cascading Dropdowns
     schoolSelect.addEventListener('change', handleSchoolChange);
-    courseSelect.addEventListener('change', handleCourseChange);
 
     // Filter Listener
     // Filter Listener Removed
@@ -144,9 +143,7 @@ function handleSchoolChange() {
 
     // Reset Child Dropdowns
     courseSelect.innerHTML = '<option value="">-- Select Course (Subject) --</option>';
-    courseIdSelect.innerHTML = '<option value="">-- Select Course Site ID --</option>';
     courseSelect.disabled = true;
-    courseIdSelect.disabled = true;
 
     if (!selectedSchool) return;
 
@@ -168,31 +165,7 @@ function handleSchoolChange() {
     courseSelect.disabled = false;
 }
 
-function handleCourseChange() {
-    const selectedCourse = courseSelect.value;
-    const selectedSchool = schoolSelect.value; // Need this to be strict
 
-    // Reset Child Dropdown
-    courseIdSelect.innerHTML = '<option value="">-- Select Course Site ID --</option>';
-    courseIdSelect.disabled = true;
-
-    if (!selectedCourse) return;
-
-    // Filter IDs for Course + School
-    const possibleIds = referenceData
-        .filter(item => item.DEPT === selectedSchool && item.SUBJ_CODE === selectedCourse)
-        .map(item => item.COURSE_SITE_ID)
-        .sort();
-
-    possibleIds.forEach(id => {
-        const opt = document.createElement('option');
-        opt.value = id;
-        opt.textContent = id;
-        courseIdSelect.appendChild(opt);
-    });
-
-    courseIdSelect.disabled = false;
-}
 
 // --- Logic: Core ---
 
@@ -219,7 +192,6 @@ async function handleAdd(e) {
         id: crypto.randomUUID(),
         school: formData.get('school'),
         course: formData.get('course'),
-        courseId: formData.get('courseId'),
         semester: formData.get('semester'),
         instructorName: formData.get('instructorName'),
         instructorEmail: formData.get('instructorEmail'),
@@ -291,7 +263,6 @@ function handleSearch(e) {
     const filtered = assessments.filter(a =>
         a.school.toLowerCase().includes(term) ||
         a.course.toLowerCase().includes(term) ||
-        a.courseId.toLowerCase().includes(term) ||
         a.instructorName.toLowerCase().includes(term)
     );
     renderTable(filtered);
@@ -306,7 +277,6 @@ function handleExport() {
     const exportData = assessments.map(a => ({
         School: a.school,
         Course: a.course,
-        'Course ID': a.courseId,
         Semester: a.semester,
         Instructor: a.instructorName,
         Email: a.instructorEmail,
@@ -643,7 +613,7 @@ function renderTable(data) {
         row.innerHTML = `
             <td>
                 <div class="fw-bold">${item.school}</div>
-                <div class="text-xs text-muted">${item.course} | ${item.courseId}</div>
+                <div class="text-xs text-muted">${item.course}</div>
             </td>
             <td>
                 <div>${item.instructorName}</div>
