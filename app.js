@@ -196,7 +196,6 @@ async function handleAdd(e) {
         instructorName: formData.get('instructorName'),
         instructorEmail: formData.get('instructorEmail'),
         studentCount: formData.get('studentCount'),
-        studentCount: formData.get('studentCount'),
         assessmentType: formData.get('assessmentType'),
         assessmentDate: formData.get('assessmentDate'),
         venue: formData.get('venue'),
@@ -232,7 +231,8 @@ async function handleAdd(e) {
             form.reset();
             toggleForm();
         } else {
-            alert('Failed to save!');
+            const errData = await res.json().catch(() => ({}));
+            alert(`Failed to save! Server said: ${errData.error || res.status} ${res.statusText}`);
         }
     } catch (err) {
         console.error(err);
