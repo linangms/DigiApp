@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
@@ -9,8 +10,8 @@ const ReferenceData = require('./models/ReferenceData');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Connect Database
-connectDB();
+// Connect Database (Handled in startServer)
+// connectDB();
 
 // Middleware
 app.use(cors());
@@ -113,7 +114,22 @@ app.post('/api/refdata', async (req, res) => {
 });
 
 // Start Server
-app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server running on port ${PORT}`);
-    console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
-});
+// Start Server Logic
+const startServer = async () => {
+    try {
+        await connectDB();
+        app.listen(PORT, '0.0.0.0', () => {
+            console.log(`Server running on port ${PORT}`);
+            console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+        });
+    } catch (err) {
+        console.error('Failed to connect to MongoDB. Server starting without DB (Offline Mode possible, but saving will fail).');
+        console.error(err);
+        // We still start the server so the UI is accessible, but DB ops will fail
+        app.listen(PORT, '0.0.0.0', () => {
+            console.log(`Server running on port ${PORT} (NO DATABASE)`);
+        });
+    }
+};
+
+startServer();
