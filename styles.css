@@ -658,3 +658,23 @@ tr.clickable-row:hover td {
         grid-template-columns: 1fr;
     }
 }
+
+.grid-4-cols {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+}
+
+@media (max-width: 1024px) {
+    .grid-4-cols {
+        grid-template-columns: 1fr 1fr;
+        /* 2x2 on tablet */
+    }
+}
+
+@media (max-width: 600px) {
+    .grid-4-cols {
+        grid-template-columns: 1fr;
+        /* Stack on mobile */
+    }
+}

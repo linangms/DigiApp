@@ -100,42 +100,49 @@
                             <h3 class="form-section-title">Course Info</h3>
                         </div>
 
-                        <div class="form-group">
-                            <label>School</label>
-                            <select name="school" id="schoolSelect" required>
-                                <option value="">-- Select School --</option>
-                                <!-- Populated from Ref Data -->
-                            </select>
+                        <!-- Row 1: School, Course, Semester, Students -->
+                        <div class="form-group full-width grid-4-cols">
+                            <div class="form-group">
+                                <label>School</label>
+                                <select name="school" id="schoolSelect" required>
+                                    <option value="">-- Select School --</option>
+                                    <!-- Populated from Ref Data -->
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Course</label>
+                                <select name="course" id="courseSelect" required disabled>
+                                    <option value="">-- Select Course (Subject) --</option>
+                                    <!-- Populated based on School -->
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Semester</label>
+                                <select name="semester">
+                                    <option value="Sem 1">Sem 1</option>
+                                    <option value="Sem 2">Sem 2</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>No. of Students</label>
+                                <input type="number" name="studentCount" min="1">
+                            </div>
                         </div>
 
-                        <div class="form-group">
-                            <label>Course</label>
-                            <select name="course" id="courseSelect" required disabled>
-                                <option value="">-- Select Course (Subject) --</option>
-                                <!-- Populated based on School -->
-                            </select>
-                        </div>
+                        <!-- Row 2: Instructor Name, Email -->
+                        <div class="form-group full-width grid-2-cols">
+                            <div class="form-group">
+                                <label>Instructor Name</label>
+                                <input type="text" name="instructorName" required>
+                            </div>
 
-
-
-                        <div class="form-group">
-                            <label>Semester</label>
-                            <input type="text" name="semester" placeholder="e.g. Sem 1 2026">
-                        </div>
-
-                        <div class="form-group">
-                            <label>Instructor Name</label>
-                            <input type="text" name="instructorName" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Email</label>
-                            <input type="email" name="instructorEmail" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label>No. of Students</label>
-                            <input type="number" name="studentCount" min="1">
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" name="instructorEmail" required>
+                            </div>
                         </div>
 
                         <!-- Section 2: Assessment Info -->
