@@ -59,7 +59,7 @@ app.post('/api/assessments', async (req, res) => {
         res.json(newAssessment);
     } catch (err) {
         console.error(err);
-        res.status(500).json({ error: 'Failed to create assessment' });
+        res.status(500).json({ error: 'Failed to create assessment: ' + err.message });
     }
 });
 
