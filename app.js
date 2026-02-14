@@ -2,6 +2,7 @@
 
 // State
 let assessments = [];
+let editingId = null; // New State
 let referenceData = []; // [{ DEPT, SUBJ_CODE, COURSE_SITE_ID, ... }]
 
 // DOM Elements
@@ -184,6 +185,10 @@ function toggleForm() {
 }
 
 
+// State Management (Moved to top)
+
+// ... (existing code matches until handleAdd) ...
+
 async function handleAdd(e) {
     e.preventDefault();
     const formData = new FormData(form);
@@ -193,8 +198,7 @@ async function handleAdd(e) {
         questionTypes.push(checkbox.value);
     });
 
-    const newAssessment = {
-        id: crypto.randomUUID(),
+    const assessmentData = {
         school: formData.get('school'),
         course: formData.get('course'),
         semester: formData.get('semester'),
@@ -204,37 +208,58 @@ async function handleAdd(e) {
         assessmentType: formData.get('assessmentType'),
         assessmentDate: formData.get('assessmentDate'),
         venue: formData.get('venue'),
-        // venueBooked: formData.get('venueBooked') === 'on', // Removed
-        openBook: formData.get('openBook'), // Now a string from select
-
-        firstContact: false,
-        demoTraining: false,
-        mockSetup: false,
-        mockTest: false,
-        approved: false,
-        confirmed: false,
-        // applicationRequired: removed
-
+        openBook: formData.get('openBook'),
         platform: formData.get('platform'),
         questionTypes: questionTypes,
-        remarks: formData.get('remarks'),
-        createdAt: new Date().toISOString()
+        remarks: formData.get('remarks')
     };
 
     try {
-        const res = await fetch('/api/assessments', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(newAssessment)
-        });
+        let res;
+        if (editingId) {
+            // UPDATE EXISTING
+            res = await fetch(`/api/assessments/${editingId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(assessmentData)
+            });
+        } else {
+            // CREATE NEW
+            const newAssessment = {
+                ...assessmentData,
+                id: crypto.randomUUID(),
+                firstContact: false,
+                demoTraining: false,
+                mockSetup: false,
+                mockTest: false,
+                approved: false,
+                confirmed: false,
+                createdAt: new Date().toISOString()
+            };
+            res = await fetch('/api/assessments', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newAssessment)
+            });
+        }
 
         if (res.ok) {
             const savedItem = await res.json();
-            assessments.unshift(savedItem);
+
+            if (editingId) {
+                // Update local array
+                const index = assessments.findIndex(a => a.id === editingId);
+                if (index !== -1) assessments[index] = savedItem;
+                alert('Assessment updated successfully!');
+            } else {
+                assessments.unshift(savedItem);
+                alert('Assessment saved successfully!');
+            }
+
             renderTable(assessments);
             updateDashboard();
-            form.reset();
-            toggleForm();
+            resetForm();
+            if (form.classList.contains('hidden-content')) toggleForm();
         } else {
             const errData = await res.json().catch(() => ({}));
             alert(`Failed to save! Server said: ${errData.error || res.status} ${res.statusText}`);
@@ -245,6 +270,61 @@ async function handleAdd(e) {
     }
 }
 
+// ... (existing code) ...
+
+function editAssessment(id) {
+    const item = assessments.find(a => a.id === id);
+    if (!item) return;
+
+    editingId = id;
+
+    // Show Form if hidden
+    if (form.classList.contains('hidden-content')) {
+        toggleForm();
+    }
+
+    // Scroll to top
+    form.scrollIntoView({ behavior: 'smooth' });
+
+    // Populate Fields
+    form.school.value = item.school;
+    handleSchoolChange(); // Trigger to populate courses
+    form.course.value = item.course; // Set course after options populate
+
+    form.semester.value = item.semester;
+    form.instructorName.value = item.instructorName;
+    form.instructorEmail.value = item.instructorEmail;
+    form.studentCount.value = item.studentCount;
+    form.assessmentType.value = item.assessmentType;
+    form.assessmentDate.value = item.assessmentDate ? item.assessmentDate.split('T')[0] : '';
+    form.venue.value = item.venue;
+    form.openBook.value = item.openBook;
+    form.platform.value = item.platform;
+    form.remarks.value = item.remarks;
+
+    // Checkboxes
+    document.querySelectorAll('input[name="qType"]').forEach(cb => {
+        cb.checked = (item.questionTypes || []).includes(cb.value);
+    });
+
+    // UI Updates
+    document.getElementById('submitBtn').innerHTML = '<i data-lucide="save"></i> Update Assessment';
+    document.getElementById('cancelEditBtn').classList.remove('hidden');
+    document.getElementById('formTitle').textContent = 'Edit Assessment Details';
+}
+
+function resetForm() {
+    editingId = null;
+    form.reset();
+    document.getElementById('submitBtn').innerHTML = '<i data-lucide="save"></i> Save Entry';
+    document.getElementById('cancelEditBtn').classList.add('hidden');
+    document.getElementById('formTitle').textContent = 'Add New Assessment Details'; // Assuming this ID exists or I should add it
+
+    // Reset dropdowns
+    courseSelect.innerHTML = '<option value="">-- Select Course (Subject) --</option>';
+    courseSelect.disabled = true;
+}
+
 async function handleDelete(id) {
     if (confirm('Are you sure you want to delete this assessment?')) {
         try {
@@ -253,6 +333,10 @@ async function handleDelete(id) {
                 assessments = assessments.filter(a => a.id !== id);
                 renderTable(assessments);
                 updateDashboard();
+                if (editingId === id) {
+                    resetForm();
+                    if (!form.classList.contains('hidden-content')) toggleForm();
+                }
             } else {
                 alert('Failed to delete');
             }
@@ -651,7 +735,10 @@ function renderTable(data) {
             <td>${statusSelectHtml}</td>
             <td>
                 <div class="action-btn-group">
-                    <button class="icon-btn btn-delete" onclick="handleDelete('${item.id}')">
+                    <button class="icon-btn btn-edit" onclick="editAssessment('${item.id}')" title="Edit">
+                        <i data-lucide="edit"></i>
+                    </button>
+                    <button class="icon-btn btn-delete" onclick="handleDelete('${item.id}')" title="Delete">
                         <i data-lucide="trash-2"></i>
                     </button>
                 </div>
