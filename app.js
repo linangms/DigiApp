@@ -625,10 +625,13 @@ function renderTable(data) {
                 <div class="text-xs text-muted">Sem: ${item.semester}</div>
             </td>
             <td>
-                <div>${item.assessmentDate ? new Date(item.assessmentDate).toLocaleDateString() : '-'}</div>
+                <div>${item.assessmentDate ? new Date(item.assessmentDate).toLocaleDateString('en-GB') : '-'}</div>
                 ${venueDisplay}
                 <div class="text-xs text-muted" style="margin-top:2px;">${item.assessmentType || ''}</div>
                 <div class="text-xs text-muted" style="margin-top:2px; font-style:italic;">${item.platform || ''}</div>
+            </td>
+            <td style="max-width: 150px; overflow-wrap: break-word;">
+                <div class="text-xs">${item.remarks || '-'}</div>
             </td>
             <!-- New Columns -->
             <td class="text-center">${createToggle('firstContact', item.firstContact)}</td>
