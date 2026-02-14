@@ -345,7 +345,8 @@ table {
 
 th,
 td {
-    padding: 0.75rem; /* Reduced from 1rem to save space */
+    padding: 0.75rem;
+    /* Reduced from 1rem to save space */
     text-align: left;
     border-bottom: 1px solid var(--glass-border);
 }
@@ -355,7 +356,8 @@ th {
     font-weight: 500;
     font-size: 0.85rem;
     text-transform: uppercase;
-    white-space: normal; /* Allow wrapping */
+    white-space: normal;
+    /* Allow wrapping */
     vertical-align: bottom;
 }
 
@@ -640,4 +642,17 @@ tr.clickable-row:hover td {
 .status-dropdown.status-canceled {
     color: #f87171;
     border-color: #f87171;
+}
+
+/* Layout Utilities */
+.grid-2-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+@media (max-width: 600px) {
+    .grid-2-cols {
+        grid-template-columns: 1fr;
+    }
 }
