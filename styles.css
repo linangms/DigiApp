@@ -645,14 +645,14 @@ tr.clickable-row:hover td {
 }
 
 /* Layout Utilities */
-.grid-2-cols {
+.grid-1-2 {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 2fr;
     gap: 1.5rem;
 }
 
 @media (max-width: 600px) {
-    .grid-2-cols {
+    .grid-1-2 {
         grid-template-columns: 1fr;
     }
 }
