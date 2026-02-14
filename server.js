@@ -70,7 +70,7 @@ app.put('/api/assessments/:id', async (req, res) => {
         const updated = await Assessment.findOneAndUpdate(
             { id: req.params.id },
             req.body,
-            { new: true }
+            { returnDocument: 'after' } // Updated to fix deprecation warning
         );
         res.json(updated);
     } catch (err) {
