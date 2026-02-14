@@ -236,7 +236,7 @@ async function handleAdd(e) {
         }
     } catch (err) {
         console.error(err);
-        alert('Error saving assessment');
+        alert('Client/Network Error: ' + err.message);
     }
 }
 
