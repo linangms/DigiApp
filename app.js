@@ -615,6 +615,10 @@ function renderTable(data) {
         const venueDisplay = `<div>${item.venue || 'TBD'}</div>
                              <div class="text-xs text-muted">${item.studentCount ? item.studentCount + ' Students' : '-'}</div>`;
 
+        const questionTypesHtml = (item.questionTypes || []).map(qt =>
+            `<span class="badge-sm" style="border-color: rgba(255,255,255,0.3); display: inline-block; margin-bottom: 2px;">${qt}</span>`
+        ).join('');
+
         row.innerHTML = `
             <td>
                 <div class="fw-bold">${item.school}</div>
@@ -629,6 +633,9 @@ function renderTable(data) {
                 ${venueDisplay}
                 <div class="text-xs text-muted" style="margin-top:2px;">${item.assessmentType || ''}</div>
                 <div class="text-xs text-muted" style="margin-top:2px; font-style:italic;">${item.platform || ''}</div>
+            </td>
+            <td>
+                <div class="tags-wrapper">${questionTypesHtml || '-'}</div>
             </td>
             <td style="max-width: 150px; overflow-wrap: break-word;">
                 <div class="text-xs">${item.remarks || '-'}</div>
