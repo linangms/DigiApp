@@ -81,14 +81,19 @@ async function loadData() {
 
 async function saveRefData() {
     try {
-        await fetch('/api/refdata', {
+        const res = await fetch('/api/refdata', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(referenceData)
         });
+
+        if (!res.ok) {
+            const errData = await res.json().catch(() => ({}));
+            throw new Error(errData.error || `Server Error ${res.status}`);
+        }
     } catch (err) {
         console.error('Error saving reference data:', err);
-        alert('Failed to save reference data!');
+        alert('Failed to save reference data! ' + err.message);
     }
 }
 
