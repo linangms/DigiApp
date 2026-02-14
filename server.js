@@ -15,6 +15,20 @@ connectDB();
 // Middleware
 app.use(cors());
 app.use(bodyParser.json({ limit: '50mb' }));
+
+// Basic Authentication
+const basicAuth = require('express-basic-auth');
+const adminUser = process.env.ADMIN_USER || 'admin';
+const adminPass = process.env.ADMIN_PASS || 'password';
+
+const authUsers = {};
+authUsers[adminUser] = adminPass;
+
+app.use(basicAuth({
+    users: authUsers,
+    challenge: true
+}));
+
 app.use(express.static(path.join(__dirname)));
 
 // --- API Endpoints ---
