@@ -514,12 +514,13 @@ tr:hover td {
     overflow-y: auto;
     /* Required for sticky to work inside */
     position: relative;
+    max-height: 65vh;
 }
 
 .header-fixed thead th {
     position: sticky;
     top: 0;
-    background: #1e293b;
+    background: var(--bg-dark);
     /* Solid color needed to cover scrolling content */
     z-index: 10;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);

@@ -716,7 +716,9 @@ function renderTable(data) {
                 <div>${item.assessmentDate ? new Date(item.assessmentDate).toLocaleDateString('en-GB') : '-'}</div>
                 ${venueDisplay}
                 <div class="text-xs text-muted" style="margin-top:2px;">${item.assessmentType || ''}</div>
-                <div class="text-xs text-muted" style="margin-top:2px; font-style:italic;">${item.platform || ''}</div>
+            </td>
+            <td>
+                <div class="text-xs">${item.platform || '-'}</div>
             </td>
             <td>
                 <div class="tags-wrapper">${questionTypesHtml || '-'}</div>
