@@ -442,7 +442,7 @@ function handleExport() {
 // DOM Elements for New Stats
 const totalCoursesStat = document.getElementById('totalCoursesStat');
 const onboardedStat = document.getElementById('onboardedStat');
-const totalSitesStat = document.getElementById('totalSitesStat');
+
 
 // Modal Elements
 const statusModal = document.getElementById('statusModal');
@@ -478,9 +478,7 @@ function updateDashboard() {
     const percentage = totalRefCourses > 0 ? ((onboardedCount / totalRefCourses) * 100).toFixed(1) : 0;
     coverageStat.textContent = `${percentage}%`;
 
-    // Total Sites (Total assessments not deleted, regardless of status? usually total records)
-    // Request says "Total # of Course Sites"
-    totalSitesStat.textContent = assessments.length;
+
 
 
     // 2. Breakdown Table Removed - Only calculating stats for Chart
