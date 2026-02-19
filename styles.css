@@ -691,3 +691,26 @@ tr.clickable-row:hover td {
         /* Stack on mobile */
     }
 }
+
+.header-filter-input {
+    width: 100%;
+    padding: 4px;
+    font-size: 0.8rem;
+    background: rgba(0, 0, 0, 0.3) !important;
+    color: white !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    border-radius: 4px;
+    z-index: 20;
+    position: relative;
+    /* Ensure interaction */
+}
+
+.header-filter-input::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.header-filter-input:focus {
+    background: rgba(0, 0, 0, 0.5) !important;
+    border-color: var(--primary) !important;
+    outline: none;
+}

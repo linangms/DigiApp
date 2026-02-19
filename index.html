@@ -184,7 +184,7 @@
                                 <label>Platform</label>
                                 <select name="platform">
                                     <option value="">-- Select Platform --</option>
-                                    <option value="Respondus Lock Down Browser">Respondus Lock Down Browser</option>
+                                    <option value="NTULearn with LDB">NTULearn with LDB</option>
                                     <option value="Examena">Examena</option>
                                     <option value="Gradescope">Gradescope</option>
                                 </select>
@@ -241,10 +241,27 @@
                     <table id="assessmentTable">
                         <thead>
                             <tr>
-                                <th>School/Course</th>
+                                School/Course
+                                <div style="margin-top: 5px;">
+                                    <input type="text" id="schoolCourseFilter" placeholder="Filter..."
+                                        class="header-filter-input">
+                                </div>
+                                </th>
                                 <th>Instructor</th>
-                                <th>Assessment Details</th>
-                                <th>Platform</th>
+                                <th>
+                                    Assessment Details
+                                </th>
+                                <th>
+                                    Platform
+                                    <div style="margin-top: 5px;">
+                                        <select id="platformFilter" class="filter-input header-filter-input">
+                                            <option value="">All</option>
+                                            <option value="Examena">Examena</option>
+                                            <option value="NTULearn with LDB">NTULearn with LDB</option>
+                                            <option value="Gradescope">Gradescope</option>
+                                        </select>
+                                    </div>
+                                </th>
                                 <th>Question Types</th>
                                 <th>Remarks</th>
                                 <th>First Contact</th>
@@ -295,7 +312,7 @@
         </div>
     </div>
 
-    <script src="app.js?v=2"></script>
+    <script src="app.js?v=4"></script>
     <script>
         lucide.createIcons();
     </script>

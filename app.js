@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Event Listeners
     form.addEventListener('submit', handleAdd);
-    searchInput.addEventListener('input', handleSearch);
+    searchInput.addEventListener('input', applyFilters);
     exportBtn.addEventListener('click', handleExport);
     toggleFormHeader.addEventListener('click', toggleForm);
 
@@ -347,15 +347,41 @@ async function handleDelete(id) {
     }
 }
 
-function handleSearch(e) {
-    const term = e.target.value.toLowerCase();
-    const filtered = assessments.filter(a =>
-        a.school.toLowerCase().includes(term) ||
-        a.course.toLowerCase().includes(term) ||
-        a.instructorName.toLowerCase().includes(term)
-    );
+// --- Filtering Logic ---
+
+const schoolCourseFilter = document.getElementById('schoolCourseFilter');
+const platformFilter = document.getElementById('platformFilter');
+
+function applyFilters() {
+    const searchTerm = searchInput.value.toLowerCase();
+    const scTerm = schoolCourseFilter.value.toLowerCase();
+    const pTerm = platformFilter.value;
+
+    const filtered = assessments.filter(a => {
+        // 1. Global Search (Search Input)
+        const matchesSearch = !searchTerm ||
+            a.school.toLowerCase().includes(searchTerm) ||
+            a.course.toLowerCase().includes(searchTerm) ||
+            (a.instructorName && a.instructorName.toLowerCase().includes(searchTerm));
+
+        // 2. School/Course Column Filter
+        const matchesSC = !scTerm ||
+            a.school.toLowerCase().includes(scTerm) ||
+            a.course.toLowerCase().includes(scTerm);
+
+        // 3. Platform Column Filter
+        const matchesPlatform = !pTerm || a.platform === pTerm;
+
+        return matchesSearch && matchesSC && matchesPlatform;
+    });
+
     renderTable(filtered);
 }
+
+// Add Listeners
+schoolCourseFilter.addEventListener('input', applyFilters);
+platformFilter.addEventListener('change', applyFilters);
+searchInput.addEventListener('input', applyFilters);
 
 function handleExport() {
     if (assessments.length === 0) {
@@ -477,7 +503,7 @@ function updateDashboard() {
     // 4. Render Platform Pie Chart
     const platformStats = {
         'Examena': 0,
-        'Respondus Lock Down Browser': 0,
+        'NTULearn with LDB': 0,
         'Gradescope': 0
     };
 
