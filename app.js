@@ -72,6 +72,7 @@ async function loadData() {
         }
 
         renderTable(assessments);
+        populateTableFilter();
     } catch (err) {
         console.error('Error loading data:', err);
     }
@@ -352,9 +353,28 @@ async function handleDelete(id) {
 const schoolCourseFilter = document.getElementById('schoolCourseFilter');
 const platformFilter = document.getElementById('platformFilter');
 
+function populateTableFilter() {
+    // Get unique schools from current assessments, sort alphabetically
+    const schools = [...new Set(assessments.map(a => a.school))].sort();
+
+    const currentVal = schoolCourseFilter.value;
+
+    schoolCourseFilter.innerHTML = '<option value="">All Schools</option>';
+    schools.forEach(sch => {
+        const opt = document.createElement('option');
+        opt.value = sch;
+        opt.textContent = sch;
+        schoolCourseFilter.appendChild(opt);
+    });
+
+    if (schools.includes(currentVal)) {
+        schoolCourseFilter.value = currentVal;
+    }
+}
+
 function applyFilters() {
     const searchTerm = searchInput.value.toLowerCase();
-    const scTerm = schoolCourseFilter.value.toLowerCase();
+    const scTerm = schoolCourseFilter.value; // Exact match for school
     const pTerm = platformFilter.value;
 
     const filtered = assessments.filter(a => {
@@ -364,22 +384,20 @@ function applyFilters() {
             a.course.toLowerCase().includes(searchTerm) ||
             (a.instructorName && a.instructorName.toLowerCase().includes(searchTerm));
 
-        // 2. School/Course Column Filter
-        const matchesSC = !scTerm ||
-            a.school.toLowerCase().includes(scTerm) ||
-            a.course.toLowerCase().includes(scTerm);
+        // 2. School Column Filter (Dropdown - Exact Match)
+        const matchesSchool = !scTerm || a.school === scTerm;
 
         // 3. Platform Column Filter
         const matchesPlatform = !pTerm || a.platform === pTerm;
 
-        return matchesSearch && matchesSC && matchesPlatform;
+        return matchesSearch && matchesSchool && matchesPlatform;
     });
 
     renderTable(filtered);
 }
 
 // Add Listeners
-schoolCourseFilter.addEventListener('input', applyFilters);
+schoolCourseFilter.addEventListener('change', applyFilters);
 platformFilter.addEventListener('change', applyFilters);
 searchInput.addEventListener('input', applyFilters);
 
