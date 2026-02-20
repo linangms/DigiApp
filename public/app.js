@@ -821,20 +821,29 @@ async function handleStatusChange(id, newStatus) {
 
 function checkUpcomingDeadlines() {
     const now = new Date();
-    const threeWeeksFromNow = new Date();
+    // Reset time to start of day to ensure 'today' is included
+    now.setHours(0, 0, 0, 0);
+
+    const threeWeeksFromNow = new Date(now);
     threeWeeksFromNow.setDate(now.getDate() + 21);
+
+    console.log('[DEBUG] Checking Deadlines:', { now, threeWeeksFromNow });
 
     const upcomingAssessments = assessments.filter(a => {
         if (!a.assessmentDate) return false;
 
         const date = new Date(a.assessmentDate);
-        // Check if date is within range [today, today+21]
-        // Note: We might want to include today. 
-        // Simple check: date >= now (ish) and date <= threeWeeksFromNow
-        // Let's rely on date string comparison or timestamp
+        // Reset time to start of day for fair comparison (dates are usually 00:00 UTC/Local depending on parsing)
+        // If assessmentDate is yyyy-mm-dd string, new Date() might treat as UTC.
+        // new Date() is local time.
+        // Mixing UTC and Local can be 8 hours off.
+        // Let's just compare timestamp values or ISO strings if easier, but normalized.
+        // Safest: set a.date to hours 0,0,0,0 in local time if it parsed that way.
+
+        // Let's rely on standard comparison but logging will help.
+
         const isUpcoming = date >= now && date <= threeWeeksFromNow;
 
-        if (!isUpcoming) return false;
         if (a.status === 'CANCELED' || a.status === 'COMPLETED') return false;
 
         // Check for missing requirements
@@ -845,12 +854,15 @@ function checkUpcomingDeadlines() {
         if (!a.approved) missing.push('OAS APPROVED');
         if (!a.confirmed) missing.push('VENUE CONFIRMED');
 
-        if (missing.length > 0) {
+        if (isUpcoming && missing.length > 0) {
+            console.log(`[DEBUG] Found Upcoming: ${a.course} on ${a.assessmentDate}. Missing: ${missing.join(', ')}`);
             a.missingActions = missing; // Attach for rendering
             return true;
         }
         return false;
     });
+
+    console.log(`[DEBUG] Total Upcoming Found: ${upcomingAssessments.length}`);
 
     if (upcomingAssessments.length > 0) {
         const tbody = document.querySelector('#notificationTable tbody');
@@ -936,6 +948,16 @@ style.innerHTML = `
         background-color: var(--primary); /* Uses existing primary color global variable if available, otherwise fallback */
         border-color: #60a5fa; /* Light blue accent */
         box-shadow: 0 0 8px rgba(96, 165, 250, 0.5);
+    }
+
+    #notificationModal {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    #notificationModal.hidden {
+        display: none !important;
     }
 `;
 document.head.appendChild(style);
