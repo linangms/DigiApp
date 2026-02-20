@@ -30,7 +30,7 @@ app.use(basicAuth({
     challenge: true
 }));
 
-app.use(express.static(path.join(__dirname)));
+app.use(express.static(path.join(__dirname, 'public')));
 
 // --- API Endpoints ---
 
@@ -39,7 +39,7 @@ app.get('/health', (req, res) => res.send('API is running'));
 
 // Explicit Root Route (Fallback)
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 // Get Assessments

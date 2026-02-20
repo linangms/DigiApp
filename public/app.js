@@ -73,6 +73,7 @@ async function loadData() {
 
         renderTable(assessments);
         populateTableFilter();
+        checkUpcomingDeadlines();
     } catch (err) {
         console.error('Error loading data:', err);
     }
@@ -816,7 +817,76 @@ async function handleStatusChange(id, newStatus) {
     }
 }
 
-// Logic Styles
+// --- Notification Logic ---
+
+function checkUpcomingDeadlines() {
+    const now = new Date();
+    const threeWeeksFromNow = new Date();
+    threeWeeksFromNow.setDate(now.getDate() + 21);
+
+    const upcomingAssessments = assessments.filter(a => {
+        if (!a.assessmentDate) return false;
+
+        const date = new Date(a.assessmentDate);
+        // Check if date is within range [today, today+21]
+        // Note: We might want to include today. 
+        // Simple check: date >= now (ish) and date <= threeWeeksFromNow
+        // Let's rely on date string comparison or timestamp
+        const isUpcoming = date >= now && date <= threeWeeksFromNow;
+
+        if (!isUpcoming) return false;
+        if (a.status === 'CANCELED' || a.status === 'COMPLETED') return false;
+
+        // Check for missing requirements
+        const missing = [];
+        if (!a.demoTraining) missing.push('DEMO/TRAINING');
+        if (!a.mockSetup) missing.push('MOCK SETUP');
+        if (!a.mockTest) missing.push('MOCK TEST');
+        if (!a.approved) missing.push('OAS APPROVED');
+        if (!a.confirmed) missing.push('VENUE CONFIRMED');
+
+        if (missing.length > 0) {
+            a.missingActions = missing; // Attach for rendering
+            return true;
+        }
+        return false;
+    });
+
+    if (upcomingAssessments.length > 0) {
+        const tbody = document.querySelector('#notificationTable tbody');
+        tbody.innerHTML = '';
+
+        upcomingAssessments.sort((a, b) => new Date(a.assessmentDate) - new Date(b.assessmentDate));
+
+        upcomingAssessments.forEach(a => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${new Date(a.assessmentDate).toLocaleDateString()}</td>
+                <td>
+                    <div class="fw-bold">${a.school}</div>
+                    <div class="text-xs text-muted">${a.course}</div>
+                </td>
+                <td>
+                    ${a.missingActions.map(action =>
+                `<span class="badge-sm canceled" style="display: inline-block; margin-bottom: 2px;">${action}</span>`
+            ).join('')}
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+
+        document.getElementById('notificationModal').classList.remove('hidden');
+    }
+}
+
+// Modify loadData to call checkUpcomingDeadlines
+// We need to inject the call inside loadData. 
+// Since we cant easily inject inside a function with this tool without replacing the whole function or using multi-replace effectively on a large range,
+// I will just append the function here and assume I modified loadData separately or will do so next.
+// Actually, I can append this function at the end, and then modify loadData in a separate step.
+// Wait, I can try to replace the end of the file ... but I need to call it.
+// Let's add the function definition here at the end.
+
 const style = document.createElement('style');
 style.innerHTML = `
     .fw-bold { font-weight: 600; color: #fff; }

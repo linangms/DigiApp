@@ -310,6 +310,49 @@
         </div>
     </div>
 
+    <!-- Admin Notification Modal -->
+    <div id="notificationModal" class="modal hidden"
+        style="position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 1000;">
+        <div class="glass-card"
+            style="width: 90%; max-width: 800px; padding: 1.5rem; max-height: 90vh; overflow-y: auto;">
+            <div
+                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--glass-border); padding-bottom: 1rem;">
+                <h2
+                    style="color: var(--status-canceled); display: flex; align-items: center; gap: 0.5rem; font-size: 1.25rem;">
+                    <i data-lucide="alert-circle"></i> Upcoming Deadlines
+                </h2>
+                <button class="icon-btn"
+                    onclick="document.getElementById('notificationModal').classList.add('hidden')"><i
+                        data-lucide="x"></i></button>
+            </div>
+
+            <p style="margin-bottom: 1.5rem; color: var(--text-muted);">
+                The following assessments are scheduled within the next <strong style="color: #fff;">3 weeks</strong>
+                and have incomplete preparations:
+            </p>
+
+            <div class="table-container">
+                <table id="notificationTable" style="margin-top: 0;">
+                    <thead>
+                        <tr>
+                            <th style="width: 120px;">Date</th>
+                            <th>Assessment</th>
+                            <th>Missing Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Injected via JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; margin-top: 1.5rem;">
+                <button class="btn-primary"
+                    onclick="document.getElementById('notificationModal').classList.add('hidden')">Acknowledge</button>
+            </div>
+        </div>
+    </div>
+
     <script src="app.js?v=6"></script>
     <script>
         lucide.createIcons();
