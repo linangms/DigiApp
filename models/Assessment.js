@@ -28,6 +28,8 @@ const AssessmentSchema = new mongoose.Schema({
     questionTypes: [String],
     status: String,
     remarks: String,
+    last_updated_by: String,
+    last_updated_date: Date,
     createdAt: { type: Date, default: Date.now }
 });
 

@@ -24,6 +24,9 @@ const adminPass = process.env.ADMIN_PASS || 'password';
 
 const authUsers = {};
 authUsers[adminUser] = adminPass;
+authUsers['gohcc'] = adminPass;
+authUsers['winson.chua'] = adminPass;
+authUsers['simonraj'] = adminPass;
 
 app.use(basicAuth({
     users: authUsers,
@@ -56,7 +59,12 @@ app.get('/api/assessments', async (req, res) => {
 // Create Assessment
 app.post('/api/assessments', async (req, res) => {
     try {
-        const newAssessment = await Assessment.create(req.body);
+        const assessmentData = {
+            ...req.body,
+            last_updated_by: req.auth.user,
+            last_updated_date: new Date()
+        };
+        const newAssessment = await Assessment.create(assessmentData);
         res.json(newAssessment);
     } catch (err) {
         console.error(err);
@@ -67,9 +75,14 @@ app.post('/api/assessments', async (req, res) => {
 // Update Assessment
 app.put('/api/assessments/:id', async (req, res) => {
     try {
+        const updateData = {
+            ...req.body,
+            last_updated_by: req.auth.user,
+            last_updated_date: new Date()
+        };
         const updated = await Assessment.findOneAndUpdate(
             { id: req.params.id },
-            req.body,
+            updateData,
             { returnDocument: 'after' } // Updated to fix deprecation warning
         );
         res.json(updated);

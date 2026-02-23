@@ -427,7 +427,9 @@ function handleExport() {
         Platform: a.platform || '',
         'Question Types': a.questionTypes.join(', '),
         Status: a.status,
-        Remarks: a.remarks
+        Remarks: a.remarks,
+        'Last Updated By': a.last_updated_by || '',
+        'Last Updated Date': a.last_updated_date ? new Date(a.last_updated_date).toLocaleString('en-GB') : ''
     }));
 
     const ws = XLSX.utils.json_to_sheet(exportData);
