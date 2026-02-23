@@ -24,9 +24,10 @@ const adminPass = process.env.ADMIN_PASS || 'password';
 
 const authUsers = {};
 authUsers[adminUser] = adminPass;
-authUsers['gohcc'] = adminPass;
-authUsers['winson.chua'] = adminPass;
-authUsers['simonraj'] = adminPass;
+authUsers['gohcc'] = process.env.GOHCC_PASS || adminPass;
+authUsers['winson.chua'] = process.env.WINSON_PASS || adminPass;
+authUsers['simonraj'] = process.env.SIMONRAJ_PASS || adminPass;
+authUsers['lkchan'] = process.env.LKCHAN_PASS || adminPass;
 
 app.use(basicAuth({
     users: authUsers,

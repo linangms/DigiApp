@@ -694,12 +694,19 @@ async function toggleField(id, field) {
         renderTable(assessments); // Re-render to show change immediately
 
         try {
-            await fetch(`/api/assessments/${id}`, {
+            const res = await fetch(`/api/assessments/${id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ [field]: newValue })
             });
-            updateDashboard();
+            if (res.ok) {
+                const updatedItem = await res.json();
+                Object.assign(assessment, updatedItem);
+                renderTable(assessments);
+                updateDashboard();
+            } else {
+                throw new Error('Failed to update');
+            }
         } catch (err) {
             console.error(err);
             // Revert on error
@@ -806,12 +813,19 @@ async function handleStatusChange(id, newStatus) {
         assessment.status = newStatus;
 
         try {
-            await fetch(`/api/assessments/${id}`, {
+            const res = await fetch(`/api/assessments/${id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ status: newStatus })
             });
-            updateDashboard();
+            if (res.ok) {
+                const updatedItem = await res.json();
+                Object.assign(assessment, updatedItem);
+                renderTable(assessments);
+                updateDashboard();
+            } else {
+                throw new Error('Failed to update status');
+            }
         } catch (err) {
             console.error(err);
             alert('Failed to update status');
