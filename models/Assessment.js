@@ -12,6 +12,7 @@ const AssessmentSchema = new mongoose.Schema({
     studentCount: String,
     assessmentType: String,
     assessmentDate: Date,
+    duration: Number,
     venue: String,
     openBook: { type: String, default: 'Closed-Book' }, // Changed to String
 

@@ -212,6 +212,7 @@ async function handleAdd(e) {
         venue: formData.get('venue'),
         openBook: formData.get('openBook'),
         platform: formData.get('platform'),
+        duration: formData.get('duration'),
         questionTypes: questionTypes,
         remarks: formData.get('remarks')
     };
@@ -302,6 +303,7 @@ function editAssessment(id) {
     form.venue.value = item.venue;
     form.openBook.value = item.openBook;
     form.platform.value = item.platform;
+    form.duration.value = item.duration || '';
     form.remarks.value = item.remarks;
 
     // Checkboxes
@@ -425,6 +427,7 @@ function handleExport() {
         'Venue Booked': a.venueBooked ? 'Yes' : 'No',
         'Confirmed': a.confirmed ? 'Yes' : 'No',
         Platform: a.platform || '',
+        'Duration (hrs)': a.duration || '',
         'Question Types': a.questionTypes.join(', '),
         Status: a.status,
         Remarks: a.remarks,
@@ -767,7 +770,9 @@ function renderTable(data) {
             <td>
                 <div>${item.assessmentDate ? new Date(item.assessmentDate).toLocaleDateString('en-GB') : '-'}</div>
                 ${venueDisplay}
-                <div class="text-xs text-muted" style="margin-top:2px;">${item.assessmentType || ''}</div>
+                <div class="text-xs text-muted" style="margin-top:2px;">
+                    ${item.assessmentType || ''} ${item.duration ? '| ' + item.duration + ' hrs' : ''}
+                </div>
             </td>
             <td>
                 <div class="text-xs">${item.platform || '-'}</div>
