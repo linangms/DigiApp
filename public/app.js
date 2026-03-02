@@ -523,7 +523,7 @@ function updateDashboard() {
     const platformStats = {
         'Examena': 0,
         'NTULearn with LDB': 0,
-        'Gradescope': 0
+        'Pen and Paper with Gradescope e-Grading': 0
     };
 
     assessments.forEach(a => {
@@ -557,7 +557,7 @@ function renderPlatformChart(platformStats) {
     const colors = [
         '#8b5cf6', // Examena (Purple)
         '#f59e0b', // Respondus (Amber/Orange)
-        '#10b981', // Gradescope (Emerald/Green)
+        '#10b981', // Pen and Paper with Gradescope e-Grading (Emerald/Green)
         '#64748b'  // Others (Slate)
     ];
 
@@ -893,6 +893,7 @@ function checkUpcomingDeadlines() {
                 <td>
                     <div class="fw-bold">${a.school}</div>
                     <div class="text-xs text-muted">${a.course}</div>
+                    <div class="text-xs text-muted" style="margin-top:2px;">Type: ${a.assessmentType || '-'}</div>
                 </td>
                 <td>
                     ${a.missingActions.map(action =>
