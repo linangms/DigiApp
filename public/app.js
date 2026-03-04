@@ -872,7 +872,7 @@ function checkUpcomingDeadlines() {
         if (!a.demoTraining) missing.push('DEMO/TRAINING');
         if (!a.mockSetup) missing.push('MOCK SETUP');
         if (!a.mockTest) missing.push('MOCK TEST');
-        if (!a.approved) missing.push('OAS APPROVED');
+        if (a.assessmentType !== 'CA' && !a.approved) missing.push('OAS APPROVED');
         if (!a.confirmed) missing.push('VENUE CONFIRMED');
 
         if (isUpcoming && missing.length > 0) {
