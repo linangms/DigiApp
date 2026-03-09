@@ -4,6 +4,7 @@
 let assessments = [];
 let editingId = null; // New State
 let referenceData = []; // [{ DEPT, SUBJ_CODE, COURSE_SITE_ID, ... }]
+let currentCalendarDate = new Date(); // State for Calendar navigations
 
 // DOM Elements
 const form = document.getElementById('assessmentForm');
@@ -74,6 +75,7 @@ async function loadData() {
         renderTable(assessments);
         populateTableFilter();
         checkUpcomingDeadlines();
+        renderCalendar(); // Initial Calendar Render
     } catch (err) {
         console.error('Error loading data:', err);
     }
@@ -537,6 +539,7 @@ function updateDashboard() {
 
     console.log("Calculated Platform Stats:", platformStats);
     renderPlatformChart(platformStats);
+    renderCalendar(); // Refresh calendar when data changes
 }
 
 // --- Modal Logic ---
@@ -835,6 +838,95 @@ async function handleStatusChange(id, newStatus) {
             console.error(err);
             alert('Failed to update status');
         }
+    }
+}
+
+// --- Logic: Calendar ---
+
+function changeMonth(offset) {
+    currentCalendarDate.setMonth(currentCalendarDate.getMonth() + offset);
+    renderCalendar();
+}
+
+function renderCalendar() {
+    const calendarMonthYear = document.getElementById('calendarMonthYear');
+    const calendarDays = document.getElementById('calendarDays');
+    if (!calendarMonthYear || !calendarDays) return;
+
+    // Set Month/Year Title
+    const monthNames = ["January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"];
+    calendarMonthYear.textContent = `${monthNames[currentCalendarDate.getMonth()]} ${currentCalendarDate.getFullYear()}`;
+
+    // Calculate Days
+    const year = currentCalendarDate.getFullYear();
+    const month = currentCalendarDate.getMonth();
+    const firstDay = new Date(year, month, 1).getDay(); // 0(Sun) - 6(Sat)
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    // Adjust firstDay to Mon-Sun (0 is Mon, 6 is Sun)
+    // getDay(): 0=Sun, 1=Mon, ..., 6=Sat
+    // We want: 0=Mon, 1=Tue, ..., 5=Sat, 6=Sun
+    let startingDay = firstDay === 0 ? 6 : firstDay - 1;
+
+    // Previous Month padding
+    const prevMonthDays = new Date(year, month, 0).getDate();
+
+    calendarDays.innerHTML = '';
+
+    // Add padding days from previous month
+    for (let i = startingDay - 1; i >= 0; i--) {
+        const dayDiv = document.createElement('div');
+        dayDiv.className = 'calendar-day other-month';
+        dayDiv.innerHTML = `<span class="day-number">${prevMonthDays - i}</span>`;
+        calendarDays.appendChild(dayDiv);
+    }
+
+    // Add actual month days
+    const today = new Date();
+    for (let i = 1; i <= daysInMonth; i++) {
+        const dayDiv = document.createElement('div');
+        dayDiv.className = 'calendar-day';
+        if (i === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
+            dayDiv.classList.add('today');
+        }
+
+        dayDiv.innerHTML = `<span class="day-number">${i}</span>`;
+
+        // Check for assessments on this day
+        const dayDate = new Date(year, month, i);
+        const dayAssessments = assessments.filter(a => {
+            if (!a.assessmentDate) return false;
+            const aDate = new Date(a.assessmentDate);
+            return aDate.getDate() === dayDate.getDate() &&
+                aDate.getMonth() === dayDate.getMonth() &&
+                aDate.getFullYear() === dayDate.getFullYear() &&
+                a.status !== 'CANCELED';
+        });
+
+        dayAssessments.forEach(a => {
+            const eventDiv = document.createElement('div');
+            eventDiv.className = 'calendar-event';
+            eventDiv.textContent = `${a.school}: ${a.course}`;
+            eventDiv.title = `${a.school} - ${a.course}\nInstructor: ${a.instructorName}\nPlatform: ${a.platform}`;
+            eventDiv.onclick = (e) => {
+                e.stopPropagation();
+                editAssessment(a.id);
+            };
+            dayDiv.appendChild(eventDiv);
+        });
+
+        calendarDays.appendChild(dayDiv);
+    }
+
+    // Next Month padding
+    const totalCells = startingDay + daysInMonth;
+    const paddingNeeded = 42 - totalCells; // 6 rows of 7
+    for (let i = 1; i <= paddingNeeded; i++) {
+        const dayDiv = document.createElement('div');
+        dayDiv.className = 'calendar-day other-month';
+        dayDiv.innerHTML = `<span class="day-number">${i}</span>`;
+        calendarDays.appendChild(dayDiv);
     }
 }
 

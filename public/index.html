@@ -71,10 +71,34 @@
                 </div>
 
                 <div class="charts-grid"
-                    style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+                    style="display: grid; grid-template-columns: 1fr 1.5fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
                     <div class="chart-container glass-card" style="margin-bottom: 0; padding: 1rem;">
                         <canvas id="statusChart"></canvas>
                     </div>
+
+                    <!-- Monthly Calendar -->
+                    <div class="calendar-container glass-card" style="margin-bottom: 0; padding: 1rem;">
+                        <div class="calendar-header">
+                            <button class="icon-btn" onclick="changeMonth(-1)"><i
+                                    data-lucide="chevron-left"></i></button>
+                            <h3 id="calendarMonthYear">Month Year</h3>
+                            <button class="icon-btn" onclick="changeMonth(1)"><i
+                                    data-lucide="chevron-right"></i></button>
+                        </div>
+                        <div class="calendar-grid">
+                            <div class="calendar-day-head">Mon</div>
+                            <div class="calendar-day-head">Tue</div>
+                            <div class="calendar-day-head">Wed</div>
+                            <div class="calendar-day-head">Thu</div>
+                            <div class="calendar-day-head">Fri</div>
+                            <div class="calendar-day-head">Sat</div>
+                            <div class="calendar-day-head">Sun</div>
+                        </div>
+                        <div id="calendarDays" class="calendar-grid days-grid">
+                            <!-- Days injected via JS -->
+                        </div>
+                    </div>
+
                     <div class="chart-container glass-card" style="margin-bottom: 0; padding: 1rem;">
                         <canvas id="platformChart"></canvas>
                     </div>
