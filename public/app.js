@@ -907,6 +907,9 @@ function renderCalendar() {
         dayAssessments.forEach(a => {
             const eventDiv = document.createElement('div');
             eventDiv.className = 'calendar-event';
+            if (a.assessmentType === 'Exam') {
+                eventDiv.classList.add('event-exam');
+            }
             eventDiv.textContent = `${a.school}: ${a.course}`;
             eventDiv.title = `${a.school} - ${a.course}\nInstructor: ${a.instructorName}\nPlatform: ${a.platform}`;
             eventDiv.onclick = (e) => {

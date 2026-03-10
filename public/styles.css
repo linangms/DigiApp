@@ -591,6 +591,11 @@ tr:hover td {
     filter: brightness(1.2);
 }
 
+.calendar-event.event-exam {
+    background: #ef4444;
+    /* Vibrant Red */
+}
+
 .dashboard-grid.four-cols {
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
 }
