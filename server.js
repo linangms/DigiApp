@@ -6,6 +6,7 @@ const path = require('path');
 const connectDB = require('./db');
 const Assessment = require('./models/Assessment');
 const ReferenceData = require('./models/ReferenceData');
+const Issue = require('./models/Issue');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -112,6 +113,66 @@ app.get('/api/refdata', async (req, res) => {
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Server Error' });
+    }
+});
+
+// --- Issues Endpoints ---
+
+// Get Issues
+app.get('/api/issues', async (req, res) => {
+    try {
+        const issues = await Issue.find().sort({ createdAt: -1 });
+        res.json(issues);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Server Error' });
+    }
+});
+
+// Create Issue
+app.post('/api/issues', async (req, res) => {
+    try {
+        const issueData = {
+            ...req.body,
+            last_updated_by: req.auth.user,
+            last_updated_date: new Date()
+        };
+        const newIssue = await Issue.create(issueData);
+        res.json(newIssue);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Failed to create issue: ' + err.message });
+    }
+});
+
+// Update Issue
+app.put('/api/issues/:id', async (req, res) => {
+    try {
+        const updateData = {
+            ...req.body,
+            last_updated_by: req.auth.user,
+            last_updated_date: new Date()
+        };
+        const updated = await Issue.findOneAndUpdate(
+            { id: req.params.id },
+            updateData,
+            { returnDocument: 'after' }
+        );
+        res.json(updated);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Failed to update issue' });
+    }
+});
+
+// Delete Issue
+app.delete('/api/issues/:id', async (req, res) => {
+    try {
+        await Issue.findOneAndDelete({ id: req.params.id });
+        res.json({ message: 'Deleted' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Failed to delete issue' });
     }
 });
 

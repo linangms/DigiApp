@@ -45,6 +45,10 @@
                     <i data-lucide="list"></i>
                     <span>Records</span>
                 </div>
+                <div class="nav-item" id="nav-issues" onclick="showView('issues')">
+                    <i data-lucide="alert-circle"></i>
+                    <span>Issues</span>
+                </div>
             </div>
         </nav>
 
@@ -308,6 +312,123 @@
                                 <i data-lucide="inbox"></i>
                                 <p>No assessments found.</p>
                             </div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Issues View -->
+                <div id="issuesView" class="hidden">
+                    <section class="glass-card">
+                        <div class="card-header" id="toggleIssueFormHeader" style="cursor: pointer;">
+                            <h2 style="color: var(--accent);"><i data-lucide="plus-circle"></i> New Issue</h2>
+                            <i data-lucide="chevron-down" id="issueFormChevron"></i>
+                        </div>
+                        <div id="issueFormContent" class="hidden" style="margin-top: 1.5rem;">
+                            <form id="issueForm">
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label>School</label>
+                                        <select id="issueSchoolSelect" required>
+                                            <option value="">-- Select School --</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Course</label>
+                                        <select id="issueCourseSelect" required disabled>
+                                            <option value="">-- Select Course (Subject) --</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Instructor Name</label>
+                                        <input type="text" id="issueInstructor" required placeholder="Enter name">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Email</label>
+                                        <input type="email" id="issueEmail" required placeholder="name@ntu.edu.sg">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Assessment Type</label>
+                                        <select id="issueAssessmentType" required>
+                                            <option value="CA">CA</option>
+                                            <option value="Exam">Exam</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Assessment Date</label>
+                                        <input type="date" id="issueAssessmentDate" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Platform</label>
+                                        <select id="issuePlatform" required>
+                                            <option value="">-- Select Platform --</option>
+                                            <option value="NTULearn with LDB">NTULearn with LDB</option>
+                                            <option value="Examena">Examena</option>
+                                            <option value="Pen and Paper with Gradescope e-Grading">Pen and Paper with Gradescope e-Grading</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Vendor</label>
+                                        <select id="issueVendor" required>
+                                            <option value="">-- Select Vendor --</option>
+                                            <option value="Blackboard">Blackboard</option>
+                                            <option value="Respondus">Respondus</option>
+                                            <option value="Examena">Examena</option>
+                                            <option value="Turnitin">Turnitin</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group full-width">
+                                        <label>Problem Description</label>
+                                        <textarea id="issueDescription" rows="3" required placeholder="Describe the issue..."></textarea>
+                                    </div>
+                                    <div class="form-group full-width">
+                                        <label>Remarks</label>
+                                        <textarea id="issueRemarks" rows="2" placeholder="Any additional notes..."></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Status</label>
+                                        <select id="issueStatus" required>
+                                            <option value="Pending">Pending</option>
+                                            <option value="Fixed">Fixed</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div style="display: flex; justify-content: flex-end; margin-top: 2rem;">
+                                    <button type="submit" class="btn-primary">
+                                        <i data-lucide="save"></i> Save Issue
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </section>
+
+                    <section class="glass-card">
+                        <div class="card-header">
+                            <h2 style="color: var(--accent);"><i data-lucide="alert-circle"></i> Issue Records</h2>
+                            <div class="actions">
+                                <div class="search-wrapper">
+                                    <i data-lucide="search"></i>
+                                    <input type="text" id="issueSearchInput" placeholder="Search issues...">
+                                </div>
+                                <button class="btn-secondary" onclick="exportIssues()">
+                                    <i data-lucide="download"></i> Export Issues
+                                </button>
+                            </div>
+                        </div>
+                        <div class="table-container">
+                            <table id="issuesTable">
+                                <thead>
+                                    <tr>
+                                        <th>School/Course</th>
+                                        <th>Instructor</th>
+                                        <th>Assessment</th>
+                                        <th>Platform/Vendor</th>
+                                        <th>Description</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
                         </div>
                     </section>
                 </div>

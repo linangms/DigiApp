@@ -20,6 +20,8 @@ const dashboardView = document.getElementById('dashboardView');
 const recordsView = document.getElementById('recordsView');
 const navDashboard = document.getElementById('nav-dashboard');
 const navRecords = document.getElementById('nav-records');
+const navIssues = document.getElementById('nav-issues');
+const issuesView = document.getElementById('issuesView');
 
 // Selects
 const schoolSelect = document.getElementById('schoolSelect');
@@ -29,9 +31,191 @@ const courseSelect = document.getElementById('courseSelect');
 // Dashboard Elements
 const coverageStat = document.getElementById('coverageStat');
 const totalStat = document.getElementById('totalStat');
+const issueForm = document.getElementById('issueForm');
+const toggleIssueFormHeader = document.getElementById('toggleIssueFormHeader');
+const issueFormContent = document.getElementById('issueFormContent');
+const issueFormChevron = document.getElementById('issueFormChevron');
+const issueSchoolSelect = document.getElementById('issueSchoolSelect');
+const issueCourseSelect = document.getElementById('issueCourseSelect');
+const issueSearchInput = document.getElementById('issueSearchInput');
+const issuesTableBody = document.querySelector('#issuesTable tbody');
+
+let issues = [];
+let editingIssueId = null;
 // Breakdown Elements Removed
 // const breakdownTableBody = document.querySelector('#breakdownTable tbody');
 // const breakdownSchoolFilter = document.getElementById('breakdownSchoolFilter');
+
+// --- Issues Management ---
+
+async function loadIssues() {
+    try {
+        const res = await fetch('/api/issues');
+        issues = await res.json();
+        renderIssuesTable();
+    } catch (err) {
+        console.error('Error loading issues:', err);
+    }
+}
+
+async function handleIssueSubmit(e) {
+    e.preventDefault();
+    const formData = {
+        id: editingIssueId || crypto.randomUUID(),
+        school: issueSchoolSelect.value,
+        course: issueCourseSelect.value,
+        instructor: document.getElementById('issueInstructor').value,
+        email: document.getElementById('issueEmail').value,
+        assessmentType: document.getElementById('issueAssessmentType').value,
+        assessmentDate: document.getElementById('issueAssessmentDate').value,
+        platform: document.getElementById('issuePlatform').value,
+        vendor: document.getElementById('issueVendor').value,
+        problemDescription: document.getElementById('issueDescription').value,
+        remarks: document.getElementById('issueRemarks').value,
+        status: document.getElementById('issueStatus').value
+    };
+
+    try {
+        const url = editingIssueId ? `/api/issues/${editingIssueId}` : '/api/issues';
+        const method = editingIssueId ? 'PUT' : 'POST';
+        const res = await fetch(url, {
+            method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData)
+        });
+
+        if (res.ok) {
+            alert(editingIssueId ? 'Issue updated' : 'Issue created');
+            resetIssueForm();
+            await loadIssues();
+        }
+    } catch (err) {
+        console.error('Error saving issue:', err);
+        alert('Failed to save issue');
+    }
+}
+
+function resetIssueForm() {
+    issueForm.reset();
+    editingIssueId = null;
+    issueCourseSelect.disabled = true;
+    document.querySelector('#issueForm button[type="submit"]').innerHTML = '<i data-lucide="save"></i> Save Issue';
+    lucide.createIcons();
+}
+
+function renderIssuesTable() {
+    const searchTerm = issueSearchInput.value.toLowerCase();
+    const filteredIssues = issues.filter(issue => 
+        issue.school.toLowerCase().includes(searchTerm) ||
+        issue.course.toLowerCase().includes(searchTerm) ||
+        issue.instructor.toLowerCase().includes(searchTerm) ||
+        issue.problemDescription.toLowerCase().includes(searchTerm)
+    );
+
+    issuesTableBody.innerHTML = filteredIssues.map(issue => `
+        <tr>
+            <td>
+                <div style="font-weight: 600;">${issue.school}</div>
+                <div style="font-size: 0.85rem; color: var(--text-muted);">${issue.course}</div>
+            </td>
+            <td>
+                <div>${issue.instructor}</div>
+                <div style="font-size: 0.85rem; color: var(--text-muted);">${issue.email}</div>
+            </td>
+            <td>
+                <div class="badge badge-secondary">${issue.assessmentType}</div>
+                <div style="font-size: 0.85rem; margin-top: 4px;">${new Date(issue.assessmentDate).toLocaleDateString()}</div>
+            </td>
+            <td>
+                <div style="font-size: 0.9rem;">${issue.platform}</div>
+                <div class="badge" style="background: rgba(255,255,255,0.1); margin-top: 4px;">${issue.vendor}</div>
+            </td>
+            <td style="max-width: 250px; font-size: 0.9rem;">
+                <div style="white-space: pre-wrap;">${issue.problemDescription}</div>
+                ${issue.remarks ? `<div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 5px; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 3px;">${issue.remarks}</div>` : ''}
+            </td>
+            <td>
+                <span class="status-pill status-${issue.status.toLowerCase()}">${issue.status}</span>
+            </td>
+            <td>
+                <div class="actions">
+                    <button class="icon-btn" onclick="editIssue('${issue.id}')" title="Edit"><i data-lucide="edit-2"></i></button>
+                    <button class="icon-btn" onclick="deleteIssue('${issue.id}')" title="Delete" style="color: var(--status-canceled);"><i data-lucide="trash-2"></i></button>
+                </div>
+            </td>
+        </tr>
+    `).join('');
+    lucide.createIcons();
+}
+
+async function editIssue(id) {
+    const issue = issues.find(i => i.id === id);
+    if (!issue) return;
+
+    editingIssueId = id;
+    issueSchoolSelect.value = issue.school;
+    populateCourseSelect(issue.school, issueCourseSelect);
+    issueCourseSelect.value = issue.course;
+    issueCourseSelect.disabled = false;
+
+    document.getElementById('issueInstructor').value = issue.instructor;
+    document.getElementById('issueEmail').value = issue.email;
+    document.getElementById('issueAssessmentType').value = issue.assessmentType;
+    document.getElementById('issueAssessmentDate').value = issue.assessmentDate ? new Date(issue.assessmentDate).toISOString().split('T')[0] : '';
+    document.getElementById('issuePlatform').value = issue.platform;
+    document.getElementById('issueVendor').value = issue.vendor;
+    document.getElementById('issueDescription').value = issue.problemDescription;
+    document.getElementById('issueRemarks').value = issue.remarks || '';
+    document.getElementById('issueStatus').value = issue.status;
+
+    // Expand form and scroll
+    issueFormContent.classList.remove('hidden');
+    issueFormChevron.style.transform = 'rotate(180deg)';
+    issueForm.scrollIntoView({ behavior: 'smooth' });
+
+    document.querySelector('#issueForm button[type="submit"]').innerHTML = '<i data-lucide="check"></i> Update Issue';
+    lucide.createIcons();
+}
+
+async function deleteIssue(id) {
+    if (!confirm('Are you sure you want to delete this issue?')) return;
+    try {
+        const res = await fetch(`/api/issues/${id}`, { method: 'DELETE' });
+        if (res.ok) {
+            await loadIssues();
+        }
+    } catch (err) {
+        console.error('Error deleting issue:', err);
+    }
+}
+
+function exportIssues() {
+    if (issues.length === 0) {
+        alert('No issues to export');
+        return;
+    }
+
+    const data = issues.map(i => ({
+        School: i.school,
+        Course: i.course,
+        Instructor: i.instructor,
+        Email: i.email,
+        'Assessment Type': i.assessmentType,
+        'Assessment Date': i.assessmentDate ? new Date(i.assessmentDate).toLocaleDateString() : '',
+        Platform: i.platform,
+        Vendor: i.vendor,
+        'Problem Description': i.problemDescription,
+        Remarks: i.remarks,
+        Status: i.status,
+        'Last Updated By': i.last_updated_by,
+        'Last Updated Date': i.last_updated_date ? new Date(i.last_updated_date).toLocaleString() : ''
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(data);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Issues");
+    XLSX.writeFile(workbook, `Issues_Report_${new Date().toISOString().split('T')[0]}.xlsx`);
+}
 
 // Initialization
 document.addEventListener('DOMContentLoaded', () => {
@@ -54,24 +238,48 @@ document.addEventListener('DOMContentLoaded', () => {
 
     lucide.createIcons();
 
-    // Set default view
+    // Navigation
     showView('dashboard');
+
+    // Load Initial Data
+    loadIssues();
+
+    // Event Listeners for Issues
+    toggleIssueFormHeader.addEventListener('click', () => {
+        issueFormContent.classList.toggle('hidden');
+        issueFormChevron.style.transform = issueFormContent.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';
+    });
+
+    issueSchoolSelect.addEventListener('change', (e) => {
+        populateCourseSelect(e.target.value, issueCourseSelect);
+    });
+
+    issueForm.addEventListener('submit', handleIssueSubmit);
+    issueSearchInput.addEventListener('input', renderIssuesTable);
 });
 
 // --- Navigation Logic ---
 function showView(view) {
+    dashboardView.classList.add('hidden');
+    recordsView.classList.add('hidden');
+    issuesView.classList.add('hidden');
+    
+    navDashboard.classList.remove('active');
+    navRecords.classList.remove('active');
+    navIssues.classList.remove('active');
+
     if (view === 'dashboard') {
         dashboardView.classList.remove('hidden');
-        recordsView.classList.add('hidden');
         navDashboard.classList.add('active');
-        navRecords.classList.remove('active');
-        updateDashboard(); // Ensure charts are rendered
-    } else {
-        dashboardView.classList.add('hidden');
+        updateDashboard();
+    } else if (view === 'records') {
         recordsView.classList.remove('hidden');
-        navDashboard.classList.remove('active');
         navRecords.classList.add('active');
-        renderTable(assessments); // Ensure table is rendered
+        renderTable(assessments);
+    } else if (view === 'issues') {
+        issuesView.classList.remove('hidden');
+        navIssues.classList.add('active');
+        renderIssuesTable();
     }
 }
 
@@ -163,21 +371,21 @@ function populateSchoolDropdown() {
     // Get unique DEPTs
     const schools = [...new Set(referenceData.map(item => item.DEPT))].sort();
 
-    schoolSelect.innerHTML = '<option value="">-- Select School --</option>';
-    schools.forEach(school => {
-        const opt = document.createElement('option');
-        opt.value = school;
-        opt.textContent = school;
-        schoolSelect.appendChild(opt);
-    });
+    const options = schools.map(school => `<option value="${school}">${school}</option>`).join('');
+    const defaultOpt = '<option value="">-- Select School --</option>';
+    
+    schoolSelect.innerHTML = defaultOpt + options;
+    issueSchoolSelect.innerHTML = defaultOpt + options;
 }
 
 function handleSchoolChange() {
-    const selectedSchool = schoolSelect.value;
+    populateCourseSelect(schoolSelect.value, courseSelect);
+}
 
-    // Reset Child Dropdowns
-    courseSelect.innerHTML = '<option value="">-- Select Course (Subject) --</option>';
-    courseSelect.disabled = true;
+function populateCourseSelect(selectedSchool, targetSelect) {
+    // Reset Child Dropdown
+    targetSelect.innerHTML = '<option value="">-- Select Course (Subject) --</option>';
+    targetSelect.disabled = true;
 
     if (!selectedSchool) return;
 
@@ -193,10 +401,10 @@ function handleSchoolChange() {
         const opt = document.createElement('option');
         opt.value = course;
         opt.textContent = course;
-        courseSelect.appendChild(opt);
+        targetSelect.appendChild(opt);
     });
 
-    courseSelect.disabled = false;
+    targetSelect.disabled = false;
 }
 
 
