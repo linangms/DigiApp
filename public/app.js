@@ -16,6 +16,10 @@ const emptyState = document.getElementById('emptyState');
 const toggleFormHeader = document.getElementById('toggleFormHeader');
 const formChevron = document.getElementById('formChevron');
 const dashboardSection = document.getElementById('dashboardSection');
+const dashboardView = document.getElementById('dashboardView');
+const recordsView = document.getElementById('recordsView');
+const navDashboard = document.getElementById('nav-dashboard');
+const navRecords = document.getElementById('nav-records');
 
 // Selects
 const schoolSelect = document.getElementById('schoolSelect');
@@ -49,7 +53,27 @@ document.addEventListener('DOMContentLoaded', () => {
     // breakdownSchoolFilter.addEventListener('change', updateDashboard);
 
     lucide.createIcons();
+
+    // Set default view
+    showView('dashboard');
 });
+
+// --- Navigation Logic ---
+function showView(view) {
+    if (view === 'dashboard') {
+        dashboardView.classList.remove('hidden');
+        recordsView.classList.add('hidden');
+        navDashboard.classList.add('active');
+        navRecords.classList.remove('active');
+        updateDashboard(); // Ensure charts are rendered
+    } else {
+        dashboardView.classList.add('hidden');
+        recordsView.classList.remove('hidden');
+        navDashboard.classList.remove('active');
+        navRecords.classList.add('active');
+        renderTable(assessments); // Ensure table is rendered
+    }
+}
 
 // --- State Management ---
 
