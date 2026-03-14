@@ -17,6 +17,7 @@ const AssessmentSchema = new mongoose.Schema({
     openBook: { type: String, default: 'Closed-Book' }, // Changed to String
 
     // Status Flags
+    return: { type: Boolean, default: false },
     firstContact: { type: Boolean, default: false },
     demoTraining: { type: Boolean, default: false },
     mockSetup: { type: Boolean, default: false },

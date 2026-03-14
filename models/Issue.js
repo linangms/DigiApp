@@ -9,7 +9,7 @@ const IssueSchema = new mongoose.Schema({
     assessmentType: { type: String, enum: ['CA', 'Exam'] },
     assessmentDate: Date,
     platform: { type: String, enum: ['NTULearn with LDB', 'Examena', 'Pen and Paper with Gradescope e-Grading'] },
-    vendor: { type: String, enum: ['Blackboard', 'Respondus', 'Examena', 'Turnitin'] },
+    vendor: { type: String, enum: ['Blackboard', 'Respondus', 'MaivenPoint', 'Turnitin'] },
     problemDescription: String,
     remarks: String,
     status: { type: String, enum: ['Pending', 'Fixed'], default: 'Pending' },

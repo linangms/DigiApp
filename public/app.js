@@ -88,6 +88,10 @@ async function handleIssueSubmit(e) {
             alert(editingIssueId ? 'Issue updated' : 'Issue created');
             resetIssueForm();
             await loadIssues();
+        } else {
+            const errData = await res.json().catch(() => ({}));
+            alert(`Failed to save issue: ${errData.error || res.status}`);
+            console.error('Server error response:', errData);
         }
     } catch (err) {
         console.error('Error saving issue:', err);
@@ -653,6 +657,7 @@ function handleExport() {
         Students: a.studentCount,
         'Assessment Type': a.assessmentType,
         'Assessment Date': a.assessmentDate,
+        'Return': a.return ? 'Yes' : 'No',
         'First Contact': a.firstContact ? 'Yes' : 'No',
         'Demo/Training': a.demoTraining ? 'Yes' : 'No',
         'Mock Setup': a.mockSetup ? 'Yes' : 'No',
@@ -1019,6 +1024,7 @@ function renderTable(data) {
                 <div class="text-xs">${item.remarks || '-'}</div>
             </td>
             <!-- New Columns -->
+            <td class="text-center">${createToggle('return', item.return)}</td>
             <td class="text-center">${createToggle('firstContact', item.firstContact)}</td>
             <td class="text-center">${createToggle('demoTraining', item.demoTraining)}</td>
             <td class="text-center">${createToggle('mockSetup', item.mockSetup)}</td>
