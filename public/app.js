@@ -665,6 +665,7 @@ function handleExport() {
         'Approved': a.approved ? 'Yes' : 'No',
         'Venue Booked': a.venueBooked ? 'Yes' : 'No',
         'Confirmed': a.confirmed ? 'Yes' : 'No',
+        'Setup Checked': a.setupChecked ? 'Yes' : 'No',
         Platform: a.platform || '',
         'Duration (hrs)': a.duration || '',
         'Question Types': a.questionTypes.join(', '),
@@ -1031,6 +1032,7 @@ function renderTable(data) {
             <td class="text-center">${createToggle('mockTest', item.mockTest)}</td>
             <td class="text-center">${createToggle('approved', item.approved)}</td>
             <td class="text-center">${createToggle('confirmed', item.confirmed)}</td>
+            <td class="text-center">${createToggle('setupChecked', item.setupChecked)}</td>
             
             <td>${statusSelectHtml}</td>
             <td>
@@ -1198,17 +1200,43 @@ function checkUpcomingDeadlines() {
 
         const isUpcoming = date >= now && date <= threeWeeksFromNow;
 
+        if (!isUpcoming) return false;
         if (a.status === 'CANCELED' || a.status === 'COMPLETED') return false;
 
-        // Check for missing requirements
         const missing = [];
-        if (!a.demoTraining) missing.push('DEMO/TRAINING');
-        if (!a.mockSetup) missing.push('MOCK SETUP');
-        if (!a.mockTest) missing.push('MOCK TEST');
-        if (a.assessmentType !== 'CA' && !a.approved) missing.push('OAS APPROVED');
-        if (!a.confirmed) missing.push('VENUE CONFIRMED');
+        const isCA = a.assessmentType === 'CA';
+        const isExam = a.assessmentType === 'Exam';
 
-        if (isUpcoming && missing.length > 0) {
+        // Check if First Contact is true
+        if (a.firstContact) {
+            if (isCA) {
+                if (!a.demoTraining) missing.push('DEMO/TRAINING');
+                if (!a.mockSetup) missing.push('MOCK SETUP');
+                if (!a.mockTest) missing.push('MOCK TEST');
+                if (!a.confirmed) missing.push('VENUE CONFIRMED');
+                if (!a.setupChecked) missing.push('SETUP CHECKED');
+            } else if (isExam) {
+                if (!a.demoTraining) missing.push('DEMO/TRAINING');
+                if (!a.mockSetup) missing.push('MOCK SETUP');
+                if (!a.mockTest) missing.push('MOCK TEST');
+                if (!a.approved) missing.push('OAS APPROVED');
+                if (!a.confirmed) missing.push('VENUE CONFIRMED');
+                if (!a.setupChecked) missing.push('SETUP CHECKED');
+            }
+        } 
+        // Else check if Return is true
+        else if (a.return) {
+            if (isCA) {
+                if (!a.confirmed) missing.push('VENUE CONFIRMED');
+                if (!a.setupChecked) missing.push('SETUP CHECKED');
+            } else if (isExam) {
+                if (!a.approved) missing.push('OAS APPROVED');
+                if (!a.confirmed) missing.push('VENUE CONFIRMED');
+                if (!a.setupChecked) missing.push('SETUP CHECKED');
+            }
+        }
+
+        if (missing.length > 0) {
             console.log(`[DEBUG] Found Upcoming: ${a.course} on ${a.assessmentDate}. Missing: ${missing.join(', ')}`);
             a.missingActions = missing; // Attach for rendering
             return true;

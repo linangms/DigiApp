@@ -24,6 +24,7 @@ const AssessmentSchema = new mongoose.Schema({
     mockTest: { type: Boolean, default: false },
     approved: { type: Boolean, default: false },
     confirmed: { type: Boolean, default: false },
+    setupChecked: { type: Boolean, default: false },
     // applicationRequired removed
 
     platform: String,
