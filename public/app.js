@@ -657,15 +657,14 @@ function handleExport() {
         Students: a.studentCount,
         'Assessment Type': a.assessmentType,
         'Assessment Date': a.assessmentDate,
-        'Return': a.return ? 'Yes' : 'No',
+        'Returning Course': a.return ? 'Yes' : 'No',
         'First Contact': a.firstContact ? 'Yes' : 'No',
         'Demo/Training': a.demoTraining ? 'Yes' : 'No',
         'Mock Setup': a.mockSetup ? 'Yes' : 'No',
         'Mock Test': a.mockTest ? 'Yes' : 'No',
-        'Approved': a.approved ? 'Yes' : 'No',
-        'Venue Booked': a.venueBooked ? 'Yes' : 'No',
-        'Confirmed': a.confirmed ? 'Yes' : 'No',
-        'Setup Checked': a.setupChecked ? 'Yes' : 'No',
+        'OAS Approval': a.approved ? 'Yes' : 'No',
+        'Venue Confirmation': a.confirmed ? 'Yes' : 'No',
+        'Setup Check': a.setupChecked ? 'Yes' : 'No',
         Platform: a.platform || '',
         'Duration (hrs)': a.duration || '',
         'Question Types': a.questionTypes.join(', '),
@@ -697,6 +696,7 @@ const statusEditTableBody = document.querySelector('#statusEditTable tbody');
 
 let statusChartInstance = null;
 let platformChartInstance = null;
+let coursesChartInstance = null;
 
 function updateDashboard() {
     if (referenceData.length === 0) return;
@@ -761,6 +761,9 @@ function updateDashboard() {
 
     // 3. Render Bar Chart
     renderChart(schoolStats);
+
+    // Render Courses by School Chart
+    renderCoursesBySchoolChart(assessments, referenceData);
 
     // 4. Render Platform Pie Chart
     const platformStats = {
@@ -917,6 +920,110 @@ function renderChart(schoolStats) {
                     grid: { color: 'rgba(255,255,255,0.1)' }
                 },
                 y: {
+                    ticks: { color: '#ccc' },
+                    grid: { color: 'rgba(255,255,255,0.1)' }
+                }
+            }
+        }
+    });
+}
+
+function renderCoursesBySchoolChart(assessments, referenceData) {
+    const canvas = document.getElementById('coursesChart');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+
+    if (coursesChartInstance) {
+        coursesChartInstance.destroy();
+    }
+
+    const schools = [...new Set(referenceData.map(item => item.DEPT))].sort();
+    
+    // Map course to school
+    const courseSchoolMap = {};
+    referenceData.forEach(item => {
+        courseSchoolMap[item.SUBJ_CODE] = item.DEPT;
+    });
+    // Fallback for assessments not in reference data
+    assessments.forEach(a => {
+        if (!courseSchoolMap[a.course]) courseSchoolMap[a.course] = a.school;
+    });
+
+    const cStats = {};
+    assessments.forEach(a => {
+        if (!cStats[a.course]) cStats[a.course] = [];
+        cStats[a.course].push(a.status || '');
+    });
+
+    const schoolData = {};
+    schools.forEach(sch => {
+        schoolData[sch] = { 'Completed': 0, 'In Progress': 0 };
+    });
+
+    for (const course in cStats) {
+        const statuses = cStats[course];
+        const hasCompleted = statuses.some(s => s === 'COMPLETED');
+        const hasPending = statuses.some(s => s !== 'COMPLETED' && s !== 'CANCELED');
+        const hasCanceledOnly = statuses.every(s => s === 'CANCELED');
+
+        if (hasCanceledOnly) continue; // Exclude
+
+        const school = courseSchoolMap[course];
+        if (!schoolData[school]) {
+            schoolData[school] = { 'Completed': 0, 'In Progress': 0 };
+        }
+
+        if (!hasPending && hasCompleted) {
+            schoolData[school]['Completed']++;
+        } else {
+            schoolData[school]['In Progress']++;
+        }
+    }
+
+    const labels = Object.keys(schoolData).sort();
+    const completedData = labels.map(sch => schoolData[sch]['Completed']);
+    const inProgressData = labels.map(sch => schoolData[sch]['In Progress']);
+
+    coursesChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Completed',
+                    data: completedData,
+                    backgroundColor: '#16a34a', // Match Green color
+                },
+                {
+                    label: 'In Progress',
+                    data: inProgressData,
+                    backgroundColor: '#60a5fa', // Blue
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Courses by School',
+                    color: '#fff',
+                    font: { size: 16 }
+                },
+                legend: {
+                    labels: { color: '#fff', boxWidth: 12, padding: 10 },
+                    position: 'bottom'
+                }
+            },
+            scales: {
+                x: {
+                    stacked: true,
+                    ticks: { color: '#ccc' },
+                    grid: { color: 'rgba(255,255,255,0.1)' }
+                },
+                y: {
+                    stacked: true,
                     ticks: { color: '#ccc' },
                     grid: { color: 'rgba(255,255,255,0.1)' }
                 }
