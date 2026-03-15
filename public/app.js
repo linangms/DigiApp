@@ -1320,26 +1320,26 @@ function checkUpcomingDeadlines() {
                 if (!a.demoTraining) missing.push('DEMO/TRAINING');
                 if (!a.mockSetup) missing.push('MOCK SETUP');
                 if (!a.mockTest) missing.push('MOCK TEST');
-                if (!a.confirmed) missing.push('VENUE CONFIRMED');
-                if (!a.setupChecked) missing.push('SETUP CHECKED');
+                if (!a.confirmed) missing.push('VENUE CONFIRMATION');
+                if (!a.setupChecked) missing.push('SETUP CHECK');
             } else if (isExam) {
                 if (!a.demoTraining) missing.push('DEMO/TRAINING');
                 if (!a.mockSetup) missing.push('MOCK SETUP');
                 if (!a.mockTest) missing.push('MOCK TEST');
-                if (!a.approved) missing.push('OAS APPROVED');
-                if (!a.confirmed) missing.push('VENUE CONFIRMED');
-                if (!a.setupChecked) missing.push('SETUP CHECKED');
+                if (!a.approved) missing.push('OAS APPROVAL');
+                if (!a.confirmed) missing.push('VENUE CONFIRMATION');
+                if (!a.setupChecked) missing.push('SETUP CHECK');
             }
         } 
         // Else check if Return is true
         else if (a.return) {
             if (isCA) {
-                if (!a.confirmed) missing.push('VENUE CONFIRMED');
-                if (!a.setupChecked) missing.push('SETUP CHECKED');
+                if (!a.confirmed) missing.push('VENUE CONFIRMATION');
+                if (!a.setupChecked) missing.push('SETUP CHECK');
             } else if (isExam) {
-                if (!a.approved) missing.push('OAS APPROVED');
-                if (!a.confirmed) missing.push('VENUE CONFIRMED');
-                if (!a.setupChecked) missing.push('SETUP CHECKED');
+                if (!a.approved) missing.push('OAS APPROVAL');
+                if (!a.confirmed) missing.push('VENUE CONFIRMATION');
+                if (!a.setupChecked) missing.push('SETUP CHECK');
             }
         }
 
