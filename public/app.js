@@ -760,7 +760,7 @@ function updateDashboard() {
     });
 
     // 3. Render Bar Chart
-    renderChart(schoolStats);
+    // renderChart(schoolStats);
 
     // Render Courses by School Chart
     renderCoursesBySchoolChart(assessments, referenceData);
@@ -854,7 +854,9 @@ function renderPlatformChart(platformStats) {
 }
 
 function renderChart(schoolStats) {
-    const ctx = document.getElementById('statusChart').getContext('2d');
+    const canvas = document.getElementById('statusChart');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
     const schools = Object.keys(schoolStats).sort();
 
     if (statusChartInstance) {
