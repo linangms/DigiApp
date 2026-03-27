@@ -1073,15 +1073,25 @@ async function toggleField(id, field) {
 }
 
 function renderTable(data) {
+    // Sort data: empty/null status first, then alphabetically (CANCELED/COMPLETED)
+    const sortedData = [...data].sort((a, b) => {
+        const statusA = a.status || '';
+        const statusB = b.status || '';
+        if (statusA === statusB) return 0;
+        if (!statusA) return -1;
+        if (!statusB) return 1;
+        return statusA.localeCompare(statusB);
+    });
+
     tableBody.innerHTML = '';
 
-    if (data.length === 0) {
+    if (sortedData.length === 0) {
         emptyState.classList.remove('hidden');
         return;
     }
     emptyState.classList.add('hidden');
 
-    data.forEach(item => {
+    sortedData.forEach(item => {
         const row = document.createElement('tr');
 
         // Status Dropdown Logic (Final Column)
