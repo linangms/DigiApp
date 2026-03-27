@@ -279,7 +279,7 @@ function showView(view) {
     } else if (view === 'records') {
         recordsView.classList.remove('hidden');
         navRecords.classList.add('active');
-        renderTable(assessments);
+        applyFilters();
     } else if (view === 'issues') {
         issuesView.classList.remove('hidden');
         navIssues.classList.add('active');
@@ -497,7 +497,7 @@ async function handleAdd(e) {
                 alert('Assessment saved successfully!');
             }
 
-            renderTable(assessments);
+            applyFilters();
             updateDashboard();
             resetForm();
             if (form.classList.contains('hidden-content')) toggleForm();
@@ -573,7 +573,7 @@ async function handleDelete(id) {
             const res = await fetch(`/api/assessments/${id}`, { method: 'DELETE' });
             if (res.ok) {
                 assessments = assessments.filter(a => a.id !== id);
-                renderTable(assessments);
+                applyFilters();
                 updateDashboard();
                 if (editingId === id) {
                     resetForm();
@@ -1044,7 +1044,7 @@ async function toggleField(id, field) {
         const newValue = !assessment[field];
         // Optimistic UI update
         assessment[field] = newValue;
-        renderTable(assessments); // Re-render to show change immediately
+        applyFilters(); // Re-render to show change immediately
 
         try {
             const res = await fetch(`/api/assessments/${id}`, {
@@ -1055,7 +1055,7 @@ async function toggleField(id, field) {
             if (res.ok) {
                 const updatedItem = await res.json();
                 Object.assign(assessment, updatedItem);
-                renderTable(assessments);
+                applyFilters();
                 updateDashboard();
             } else {
                 throw new Error('Failed to update');
@@ -1064,7 +1064,7 @@ async function toggleField(id, field) {
             console.error(err);
             // Revert on error
             assessment[field] = !newValue;
-            renderTable(assessments);
+            applyFilters();
             alert('Failed to update status');
         }
     }
@@ -1178,7 +1178,7 @@ async function handleStatusChange(id, newStatus) {
             if (res.ok) {
                 const updatedItem = await res.json();
                 Object.assign(assessment, updatedItem);
-                renderTable(assessments);
+                applyFilters();
                 updateDashboard();
             } else {
                 throw new Error('Failed to update status');
