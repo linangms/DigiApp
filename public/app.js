@@ -621,9 +621,11 @@ function applyFilters() {
     const filtered = assessments.filter(a => {
         // 1. Global Search (Search Input)
         const matchesSearch = !searchTerm ||
-            a.school.toLowerCase().includes(searchTerm) ||
-            a.course.toLowerCase().includes(searchTerm) ||
-            (a.instructorName && a.instructorName.toLowerCase().includes(searchTerm));
+            (a.school && a.school.toLowerCase().includes(searchTerm)) ||
+            (a.course && a.course.toLowerCase().includes(searchTerm)) ||
+            (a.instructorName && a.instructorName.toLowerCase().includes(searchTerm)) ||
+            (a.assessmentType && a.assessmentType.toLowerCase().includes(searchTerm)) ||
+            (a.venue && a.venue.toLowerCase().includes(searchTerm));
 
         // 2. School Column Filter (Dropdown - Exact Match)
         const matchesSchool = !scTerm || a.school === scTerm;
