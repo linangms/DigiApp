@@ -1278,6 +1278,8 @@ function renderCalendar() {
                 } else if (a.platform === 'Examena') {
                     eventDiv.classList.add('platform-examena');
                 }
+            } else if (a.assessmentType === 'CA') {
+                eventDiv.classList.add('event-ca');
             }
             eventDiv.textContent = `${a.school}: ${a.course}`;
             eventDiv.title = `${a.school} - ${a.course}\nInstructor: ${a.instructorName}\nPlatform: ${a.platform}`;

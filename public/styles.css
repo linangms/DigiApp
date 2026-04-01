@@ -678,6 +678,10 @@ tr:hover td {
     filter: brightness(1.2);
 }
 
+.calendar-event.event-ca {
+    background: #3b82f6; /* Blue */
+}
+
 .calendar-event.event-exam {
     background: #ef4444;
     /* Vibrant Red */
