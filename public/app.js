@@ -1271,6 +1271,13 @@ function renderCalendar() {
             eventDiv.className = 'calendar-event';
             if (a.assessmentType === 'Exam') {
                 eventDiv.classList.add('event-exam');
+                if (a.platform === 'Pen and Paper with Gradescope e-Grading') {
+                    eventDiv.classList.add('platform-gradescope');
+                } else if (a.platform === 'NTULearn with LDB') {
+                    eventDiv.classList.add('platform-ntulearn');
+                } else if (a.platform === 'Examena') {
+                    eventDiv.classList.add('platform-examena');
+                }
             }
             eventDiv.textContent = `${a.school}: ${a.course}`;
             eventDiv.title = `${a.school} - ${a.course}\nInstructor: ${a.instructorName}\nPlatform: ${a.platform}`;
