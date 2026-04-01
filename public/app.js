@@ -659,6 +659,7 @@ function handleExport() {
         Students: a.studentCount,
         'Assessment Type': a.assessmentType,
         'Assessment Date': a.assessmentDate,
+        Venue: a.venue || '',
         'Returning Course/ Instructor': a.return ? 'Yes' : 'No',
         'First Contact': a.firstContact ? 'Yes' : 'No',
         'Demo/Training': a.demoTraining ? 'Yes' : 'No',
