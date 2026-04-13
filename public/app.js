@@ -1363,7 +1363,6 @@ function checkUpcomingDeadlines() {
             } else if (isExam) {
                 if (!a.approved) missing.push('OAS APPROVAL');
                 if (!a.confirmed) missing.push('VENUE CONFIRMATION');
-                if (!a.setupChecked) missing.push('SETUP CHECK');
             }
         }
 
